@@ -1,0 +1,11 @@
+//
+// Created by SantiagoGiraldo on 3/16/2021.
+//
+
+#ifndef REMOTESHELL_SIZES_H
+#define REMOTESHELL_SIZES_H
+// STRING SIZES FOR CLIENT AND SERVER COMMUNICATION
+// TODO: Change accordingly
+#define MAX_INPUT 80
+#define MAX_RESPONSE 100
+#endif //REMOTESHELL_SIZES_H

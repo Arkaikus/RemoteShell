@@ -58,10 +58,10 @@ int TCP_Accept(int socket) {
   // Accept the data packet from client and verification
   connfd = accept(socket, (SA *)&cli, &len);
   if (connfd < 0) {
-    printf("server acccept failed...\n");
+    printf("Server acccept failed...\n");
     exit(0);
   } else
-    printf("server acccept the client...\n");
+    printf("Server acccept the client...\n");
 
   return connfd;
 }
@@ -87,10 +87,10 @@ int TCP_Open(char *host, int port) {
 
   // connect the client socket to server socket
   if (connect(sockfd, (SA *)&servaddr, sizeof(servaddr)) != 0) {
-    printf("connection with the server failed...\n");
+    printf("Connection with the server failed...\n");
     exit(0);
   } else
-    printf("connected to the server..\n");
+    printf("Connected to the server..\n");
 
   return sockfd;
 }
@@ -102,7 +102,7 @@ int TCP_Write_String(int socket, char *string) {
   int written;
   written = write(socket, string, len);
   if (len != written) {
-    printf("No se enviaron todos los datos %d/%d\n", written, len);
+    printf("Sent %d/%d\n", written, len);
   }
   return written;
 }
@@ -111,7 +111,7 @@ int TCP_Read_String(int socket, char *string, int maxstring) {
   int _read;
   _read = read(socket, string, maxstring);
 
-  printf("Se leyeron %d/%d\n", _read, maxstring);
+  printf("Received %d/%d\n", _read, maxstring);
 
   return _read;
 }
