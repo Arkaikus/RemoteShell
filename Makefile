@@ -1,13 +1,16 @@
-client_server: client server
+all: clean init_dirs build_client build_server
 
-client: tcp.o
-	gcc -o client client.c tcp.o
+build_client: build_tcp
+	gcc client.c ./obj/*.o -o ./dist/client
 
-server: tcp.o
-	gcc -o server server.c tcp.o
+build_server: build_tcp
+	gcc server.c ./obj/*.o -o ./dist/server
 
-tcp.o:
-	gcc -c tcp.c
+build_tcp:
+	gcc -c tcp.c -o ./obj/tcp.o
+
+init_dirs:
+	mkdir dist obj
 
 clean:
-	rm -f tcp.o client server
+	rm -rf dist/ obj/
