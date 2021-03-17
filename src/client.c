@@ -37,23 +37,27 @@ int main(int argc, char *argv[]) {
         // reads user input
         printf("> ");
         fgets(input, sizeof(input), stdin);
-        printf("You wrote %s\n", input);
-
         // removes \n from input
         input[strlen(input) - 1] = '\x0';
+        if(!strcmp(input, "")){
+            printf("Please input something\n");
+            continue;
+        }
+        printf("You wrote %s\n", input);
+
         // sends user input
         TCP_Write_String(sockfd, input);
 
         // Read Server Response
         TCP_Read_String(sockfd, response, MAX_RESPONSE);
         printf("Server says: %s\n", response);  // print response
-        bzero(response, MAX_RESPONSE); // clean response
-
         // loop exit
-        if (!strcmp(input, "exit")){
-            printf("bye!\n");
+        if (!strcmp(input, "exit") || !strlen(response)){
+            printf("Connection lost, bye!\n");
             break;
         }
+        // clean response
+        bzero(response, MAX_RESPONSE);
     }
 
     // close the socket

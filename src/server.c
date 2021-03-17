@@ -50,8 +50,8 @@ int main(int argc, char *argv[]) {
         TCP_Write_String(connfd, input);
 
         // TODO: remove in the future
-        if (!strcmp(input, "exit")){
-            printf("bye!\n");
+        if (!strcmp(input, "exit") || !strlen(input)){
+            printf("Connection lost, bye!\n");
             break;
         }
     }
