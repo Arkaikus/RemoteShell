@@ -8,4 +8,5 @@
 // TODO: Change accordingly
 #define MAX_INPUT 80
 #define MAX_RESPONSE 100
+#define MAX_THREADS 50
 #endif //REMOTESHELL_SIZES_H

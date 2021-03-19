@@ -8,7 +8,7 @@ This is a toy implementation of a remote terminal to execute commands in C langu
 
 ## TODO
 
-- **src/server.c** lines 26, 44, 52
+- **src/server.c** lines 35
 - **src/sizes.h** lines 8
 
 ## Setup
