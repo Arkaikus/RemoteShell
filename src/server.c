@@ -33,6 +33,9 @@ void *open_shell(void * arg){
 
         // Response preparation
         // TODO: execute the input as a command then send back the O.S response
+        // TODO: pthread_t tid
+        // TODO: pthread_create(&tid, NULL, func, (void *)response)
+        // TODO: pthread_join
         printf("Shell %d: %s\n",shell->shell_id, input);
 
         // Mirror response to client
@@ -52,19 +55,17 @@ void *open_shell(void * arg){
 
 int available_shell(pthread_t *pool){
     printf("################################################\n");
-    int available = -1;
     // check max number of connections
     for(int i=0; i < MAX_THREADS; i++){
-        printf("Shell %d status is %d\n", i, shell_status[i]);
-        // selects available shell
-        if(shell_status[i]==0) available=i;
         // change status of finished to available
         if(shell_status[i]==2) {
             pthread_join(pool[i], NULL);
             shell_status[i] = 0;
         }
+        // selects available shell
+        if(shell_status[i]==0) return i;
     }
-    return available;
+    return -1;
 };
 
 
