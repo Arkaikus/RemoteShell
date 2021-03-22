@@ -5,10 +5,12 @@
 #include <unistd.h>
 #include <string.h>
 #include <pthread.h>
-
 #include "tcp.h"
 #include "sizes.h"
 
+char code[50];
+char code2[100];
+char msj[]="!servidor recibio dato¡";
 struct shell_t{
     int shell_id;
     int socket;
@@ -30,16 +32,26 @@ void *open_shell(void * arg){
 
         // Read client input
         TCP_Read_String(shell->socket, input, MAX_INPUT);
+        printf("Se leyo %s\n",input);
+        for (int i = 0; i< 50; i++){
+          code[i] = input[i];
+        }
 
+        for (int i = 0; i< 100; i++){
+          code2[i] = msj[i];
+        }
+       printf("Mensaje para cliente: %s\n",code2);
         // Response preparation
         // TODO: execute the input as a command then send back the O.S response
         // TODO: pthread_t tid
         // TODO: pthread_create(&tid, NULL, func, (void *)response)
         // TODO: pthread_join
         printf("Shell %d: %s\n",shell->shell_id, input);
+        printf("comando desde cliente %d es: %s\n",shell->shell_id, input);
+        system (code);
 
         // Mirror response to client
-        TCP_Write_String(shell->socket, input);
+        TCP_Write_String(shell->socket, code2);
 
         if (!strcmp(input, "exit") || !strlen(input)){
             printf("Shell %d: bye!\n", shell->shell_id);
@@ -78,8 +90,7 @@ int main(int argc, char *argv[]) {
     }
 
     port = atoi(argv[1]);
-
-    // ############################################################
+   // ############################################################
     // Listen to connections
     // ############################################################
     socket = TCP_Server_Open(port);

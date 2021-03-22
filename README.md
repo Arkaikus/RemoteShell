@@ -3,8 +3,9 @@
 This is a toy implementation of a remote terminal to execute commands in C language
 
 ## Team
+
 - 2004890 Santiago Giraldo
-- Kenneth
+- 2100650 Kenneth Puliche
 
 ## TODO
 
