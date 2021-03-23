@@ -50,7 +50,9 @@ int main(int argc, char *argv[]) {
 
         // Read Server Response
         TCP_Read_String(sockfd, response, MAX_RESPONSE);
+         printf("%s\n", "-------------------");
         printf("Server says: %s\n", response);  // print response
+        
         // loop exit
         if (!strcmp(input, "exit") || !strlen(response)){
             printf("Connection lost, bye!\n");

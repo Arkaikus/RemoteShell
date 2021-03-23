@@ -7,9 +7,14 @@
 #include <pthread.h>
 #include "tcp.h"
 #include "sizes.h"
+#include <string.h>
 
+#define BUFSIZE 20000000
+
+int  b=0;
+char a[BUFSIZE];
+char buf[BUFSIZE];
 char code[50];
-char code2[100];
 char msj[]="!servidor recibio dato¡";
 struct shell_t{
     int shell_id;
@@ -17,6 +22,40 @@ struct shell_t{
 };
 
 int shell_status[MAX_THREADS]={0};
+
+//prueba percepcion de datos---------------------------------------
+
+char GetStdoutFromCommand(int socket, char *string, int maxstring, void *arg,char *code) {
+   
+   struct shell_t *shell = ((struct shell_t*)arg);
+char *cmd = code;
+    //char buf[BUFSIZE];
+    FILE *fp;
+    if ((fp = popen(cmd, "r")) == NULL) {
+        printf("Error opening pipe!\n");
+        return -1;
+    }
+  
+    while (fgets(buf, BUFSIZE, fp) != NULL) {
+
+          printf("OUTPUT: %s", buf);
+          strcat (a,buf);
+
+    }
+      
+    if(pclose(fp))  {
+        printf("Command not found or exited with error status\n");
+        return -1;
+    }
+
+   
+
+}
+
+//---------------------------------------------------------------------
+
+
+
 
 void *open_shell(void * arg){
     struct shell_t *shell = ((struct shell_t*)arg);
@@ -29,6 +68,7 @@ void *open_shell(void * arg){
         // Clean buffer variables
         bzero(input, MAX_INPUT);
         bzero(response, MAX_RESPONSE);
+        bzero(a, BUFSIZE);
 
         // Read client input
         TCP_Read_String(shell->socket, input, MAX_INPUT);
@@ -36,11 +76,6 @@ void *open_shell(void * arg){
         for (int i = 0; i< 50; i++){
           code[i] = input[i];
         }
-
-        for (int i = 0; i< 100; i++){
-          code2[i] = msj[i];
-        }
-       printf("Mensaje para cliente: %s\n",code2);
         // Response preparation
         // TODO: execute the input as a command then send back the O.S response
         // TODO: pthread_t tid
@@ -48,11 +83,15 @@ void *open_shell(void * arg){
         // TODO: pthread_join
         printf("Shell %d: %s\n",shell->shell_id, input);
         printf("comando desde cliente %d es: %s\n",shell->shell_id, input);
-        system (code);
-
+        //system (code);
         // Mirror response to client
-        TCP_Write_String(shell->socket, code2);
+        
+        GetStdoutFromCommand(shell->socket, input, MAX_INPUT, arg,code); //respuesta del servidor ante comando del  cliente
+      
 
+      TCP_Write_String(shell->socket, a);
+       printf("Mensaje para cliente: %s\n",a);
+        
         if (!strcmp(input, "exit") || !strlen(input)){
             printf("Shell %d: bye!\n", shell->shell_id);
             shell_status[shell->shell_id]=2;
@@ -63,6 +102,8 @@ void *open_shell(void * arg){
 
     return NULL;
 }
+
+
 
 
 int available_shell(pthread_t *pool){
@@ -95,7 +136,12 @@ int main(int argc, char *argv[]) {
     // ############################################################
     socket = TCP_Server_Open(port);
     pthread_t threads[MAX_THREADS];
+    
     while(1){
+
+ 
+
+
         int shell_id = available_shell(threads);
         printf("Shell %d is available\n", shell_id);
         printf("################################################\n");
@@ -113,4 +159,5 @@ int main(int argc, char *argv[]) {
 
     // After chatting close the socket
     close(socket);
+    
 }
