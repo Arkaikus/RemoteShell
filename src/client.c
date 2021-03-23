@@ -48,13 +48,18 @@ int main(int argc, char *argv[]) {
         // sends user input
         TCP_Write_String(sockfd, input);
 
+        if(!strcmp(input, "exit") ){
+            printf("bye!\n");
+            break;
+        }
+
         // Read Server Response
         TCP_Read_String(sockfd, response, MAX_RESPONSE);
-         printf("%s\n", "-------------------");
+        printf("%s\n", "-------------------");
         printf("Server says: %s\n", response);  // print response
-        
+
         // loop exit
-        if (!strcmp(input, "exit") || !strlen(response)){
+        if (!strlen(response)){
             printf("Connection lost, bye!\n");
             break;
         }
