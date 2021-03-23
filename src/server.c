@@ -22,24 +22,16 @@ void *open_shell(void * arg){
     //Chatting between client and server thread instance
     //############################################################
     char input[MAX_INPUT];
+    char buffer[MAX_RESPONSE];
     char response[MAX_RESPONSE];
     while(1){
         // Clean buffer variables
         bzero(input, MAX_INPUT);
+        bzero(buffer, MAX_RESPONSE);
         bzero(response, MAX_RESPONSE);
 
         // Read client input
         TCP_Read_String(shell->socket, input, MAX_INPUT);
-
-        // Response preparation
-        // TODO: execute the input as a command then send back the O.S response
-        // TODO: pthread_t tid
-        // TODO: pthread_create(&tid, NULL, func, (void *)response)
-        // TODO: pthread_join
-        printf("Shell %d: %s\n",shell->shell_id, input);
-
-        // Mirror response to client
-        TCP_Write_String(shell->socket, input);
 
         if (!strcmp(input, "exit") || !strlen(input)){
             printf("Shell %d: bye!\n", shell->shell_id);
@@ -47,6 +39,25 @@ void *open_shell(void * arg){
             free(shell);
             break;
         }
+
+        // Response preparation
+        // Open pipe to file
+        FILE* pipe = popen(input, "r");
+        if (!pipe) {
+            strcat(response, "Server failed to execute");
+        }
+
+        // read till end of process:
+        while (!feof(pipe)) {
+            // use buffer to read and add to result
+            if (fgets(buffer, MAX_RESPONSE, pipe) != NULL)
+                strcat(response,buffer);
+        }
+
+        pclose(pipe);
+
+        // Mirror response to client
+        TCP_Write_String(shell->socket, response);
     }
 
     return NULL;
